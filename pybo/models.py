@@ -1,62 +1,117 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
-# 모델을 변경한 후에는 반드시 makemigrations와 migrate를 통해 데이터베이스를 변경해 주어야 한다.
-
-# Question 모델은 질문 데이터를 저장할 때 사용하는 모델이다.
+# Question 모델은 질문 데이터를 저장할 때 사용하는 모델입니다.
 class Question(models.Model):
     author = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
         related_name='author_question'
-        ) # User 모델은 회원 가입시 데이터 저장에 사용했던 모델이다.
+    ) 
+    # 질문 작성자(User 모델과 다대일 관계)
+    # on_delete=models.CASCADE는 User가 삭제될 때 해당 사용자의 질문도 함께 삭제됨
     
-    subject = models.CharField(max_length=200, blank=False) # CharField는 길이 제한이 있는 문자열을 정의할 때 사용
-    content = models.TextField(null=True, blank=True) # 공백허용으로 변경 y.h.kang
+    subject = models.CharField(max_length=200, blank=False) 
+    # 질문 제목, 최대 200자까지 허용
     
-    #content = models.TextField() # TextField는 길이 제한이 없는 문자열을 정의할 때 사용
+    content = models.TextField(null=True, blank=True) 
+    # 질문 내용, 비워둘 수 있음 (null=True, blank=True)
     
-    create_date = models.DateTimeField() # DateTimeField는 날짜와 시간을 의미
-    """
-    null=True는 데이터베이스에 해당 값이 NULL로 저장되는 것을 허용
+    create_date = models.DateTimeField() 
+    # 질문 작성 일시
     
-    blank=True는 폼 데이터 검사 시 값이 없어도 된다는 것을 의미
+    modify_date = models.DateTimeField(null=True, blank=True) 
+    # 질문 수정 일시, 수정하지 않으면 null
     
-    즉, modify_date는 수정일시를 저장하는 필드이며, 수정일시가 없을 수도 있다는 의미
-    """
-    modify_date = models.DateTimeField(null=True, blank=True)
-    view_count = models.PositiveIntegerField(default=0)
-    voter = models.ManyToManyField( User,related_name='voter_question') # 추천인 추가
-    image = models.ImageField(upload_to='image/', null=True, blank=True, verbose_name='업로드 이미지')
+    view_count = models.PositiveIntegerField(default=0) 
+    # 질문 조회 수, 기본값은 0
+    
+    voter = models.ManyToManyField(
+        User, 
+        related_name='voter_question'
+    ) 
+    # 질문을 추천한 사용자들 (ManyToManyField를 사용하여 여러 사용자가 추천 가능)
+    
+    image = models.ImageField(
+        upload_to='image/', 
+        null=True, 
+        blank=True, 
+        verbose_name='업로드 이미지'
+    ) 
+    # 질문에 첨부된 이미지, 이미지를 비워둘 수 있음
 
-    # __str__ 메서드는 객체를 문자열로 표현할 때 사용하는 함수이다.
+    # __str__ 메서드는 객체를 문자열로 표현할 때 사용하는 함수입니다.
     def __str__(self):
-        return self.subject
+        return self.subject  # 질문 객체가 출력될 때 제목을 표시
 
-# Answer 모델은 답변 데이터를 저장할 때 사용하는 모델이다.
+# Answer 모델은 답변 데이터를 저장할 때 사용하는 모델입니다.
 class Answer(models.Model):
     author = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
         related_name='author_answer'
-        ) 
-    """
-    ForeignKey는 다른 모델과의 연결, 다대일 관계를 정의해주는 클래스 
+    ) 
+    # 답변 작성자, 작성자가 삭제되면 답변도 삭제
     
-    on_delete=models.CASCADE는 연결된 객체가 삭제될 때 이 객체와 연결된 객체도 삭제된다는 의미
-    """
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    content = models.TextField()
-    create_date = models.DateTimeField()
-    modify_date = models.DateTimeField(null=True, blank=True)
-    voter = models.ManyToManyField(User, related_name='voter_answer')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE) 
+    # 답변이 달린 질문과 연결 (다대일 관계), 질문이 삭제되면 답변도 삭제됨
+    
+    content = models.TextField() 
+    # 답변 내용
+    
+    create_date = models.DateTimeField() 
+    # 답변 작성 일시
+    
+    modify_date = models.DateTimeField(null=True, blank=True) 
+    # 답변 수정 일시, 수정하지 않으면 null
+    
+    voter = models.ManyToManyField(User, related_name='voter_answer') 
+    # 답변을 추천한 사용자들 (ManyToManyField)
+    
+    # __str__ 메서드는 객체를 문자열로 표현할 때 사용하는 함수입니다.
+    def __str__(self):
+        return self.subject  # 질문 객체가 출력될 때 제목을 표시
 
+# Comment 모델은 질문 또는 답변에 대한 댓글 데이터를 저장할 때 사용하는 모델입니다.
 class Comment(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField()
-    create_date = models.DateTimeField()
-    modify_date = models.DateTimeField(null=True, blank=True)
-    question = models.ForeignKey(Question, null=True, blank=True, related_name='comments', on_delete=models.CASCADE)
-    answer = models.ForeignKey(Answer, null=True, blank=True, on_delete=models.CASCADE)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='replies', null=True, blank=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE) 
+    # 댓글 작성자, 작성자가 삭제되면 댓글도 삭제
+    
+    content = models.TextField() 
+    # 댓글 내용
+    
+    create_date = models.DateTimeField() 
+    # 댓글 작성 일시
+    
+    modify_date = models.DateTimeField(null=True, blank=True) 
+    # 댓글 수정 일시, 수정하지 않으면 null
+    
+    question = models.ForeignKey(
+        Question, 
+        null=True, 
+        blank=True, 
+        related_name='comments', 
+        on_delete=models.CASCADE
+    ) 
+    # 질문에 달린 댓글 (질문과 댓글의 관계), 비워둘 수 있음
+    
+    answer = models.ForeignKey(
+        Answer, 
+        null=True, 
+        blank=True, 
+        on_delete=models.CASCADE
+    ) 
+    # 답변에 달린 댓글, 비워둘 수 있음
+    
+    parent = models.ForeignKey(
+        'self', 
+        on_delete=models.CASCADE, 
+        related_name='replies', 
+        null=True, 
+        blank=True
+    ) 
+    # 부모 댓글 (대댓글 기능), 비워둘 수 있음
+    
+    # __str__ 메서드를 추가해도 좋습니다. (선택사항)
+    def __str__(self):
+        return self.content[:20]  # 댓글 내용을 앞 20자만 출력하여 객체를 표현
