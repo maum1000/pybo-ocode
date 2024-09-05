@@ -41,7 +41,11 @@ def comment_modify_question(request, comment_id):
 
     # 현재 로그인한 사용자가 댓글 작성자가 아닐 경우 권한 에러 메시지
     if request.user != comment.author:
-        messages.error(request, '댓글 수정 권한이 없습니다.')
+        messages.error(request, 
+    
+    '댓글 수정 권한이 없습니다.'
+    
+    )
         return redirect('pybo:detail', question_id=comment.question.id)  # 권한이 없을 경우 질문 상세 페이지로 리다이렉트
 
     if request.method == "POST":  # POST 요청 시 (댓글 수정 요청)
@@ -67,7 +71,11 @@ def comment_delete_question(request, comment_id):
 
     # 현재 로그인한 사용자가 댓글 작성자가 아닐 경우 권한 에러 메시지
     if request.user != comment.author:
-        messages.error(request, '댓글 삭제 권한이 없습니다.')
+        messages.error(request,
+    
+    '댓글 삭제 권한이 없습니다.'
+    
+    )
         return redirect('pybo:detail', question_id=comment.question.id)  # 권한이 없을 경우 질문 상세 페이지로 리다이렉트
     else:
         comment.delete()  # 댓글 삭제

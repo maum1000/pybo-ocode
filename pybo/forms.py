@@ -1,6 +1,8 @@
 from django import forms
 from pybo.models import Question, Answer,Comment
 
+########################################################################################################
+
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
@@ -20,6 +22,8 @@ class QuestionForm(forms.ModelForm):
         #     'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
         # } # subject 필드는 TextInput 위젯을 사용하고 content 필드는 Textarea 위젯을 사용
         
+########################################################################################################
+
 class AnswerForm(forms.ModelForm):
     class Meta:
         model = Answer
@@ -31,7 +35,7 @@ class AnswerForm(forms.ModelForm):
         #     'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         # } # content 필드는 Textarea 위젯을 사용
 
-
+########################################################################################################
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -57,3 +61,5 @@ class CommentForm(forms.ModelForm):
         if commit:
             comment.save()
         return comment
+
+########################################################################################################

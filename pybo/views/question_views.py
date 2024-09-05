@@ -103,8 +103,11 @@ def question_vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     #
     if request.user == question.author:
-        messages.error(request, '본인이 작성한 글은 추천할수 없습니다')
-        #
+        messages.error(request, 
+    
+    '본인이 작성한 글은 추천할수 없습니다'
+    
+    )
     #
     else:
         question.voter.add(request.user)
