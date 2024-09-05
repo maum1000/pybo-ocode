@@ -38,6 +38,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['content','parent']
 
+
         labels ={
             'content': '내용',
         }
