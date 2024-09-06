@@ -23,9 +23,14 @@
 
     {% comment %} 질문 내용 표시 start {% endcomment %}
     <div class="card-body">
+
+        {% comment %} 질문 글 내용 start {% endcomment %}
         <div class="card-text">
-            <!-- 질문 내용 표시 -->
+            {{ question.content|mark }}
         </div>
+        {% comment %} 질문 글 내용 end {% endcomment %}
+
+        {% comment %} 질문 등록,수정 및 작성자 start {% endcomment %}
         <div class="d-flex justify-content-end">
             {% if question.modify_date %}
                 <div class="badge bg-light text-dark p-2 text-start mx-3">
@@ -38,6 +43,16 @@
                 <div>{{ question.create_date }}</div>
             </div>
         </div>
+        {% comment %} 질문 등록,수정 및 작성자 end {% endcomment %}
+
+        {% comment %} 업로드된 이미지 표시 start {% endcomment %}
+        {% if question.image %}
+            <div>
+                <h5>업로드된 이미지:</h5>
+                <img src="{{ question.image.url }}" alt="Uploaded Image" style="max-width: 300px; height: auto;">
+            </div>
+        {% endif %}
+        {% comment %} 업로드된 이미지 표시 end {% endcomment %}
 
         <div class="my-3">
             <a 
@@ -79,10 +94,16 @@
                 </span>
 
                 {% if request.user == comment.author %}
-                    <a href="{% url 'pybo:comment_modify_question' comment.id %}" class="small">수정</a>,
-                    <a href="#" class="small delete" data-uri="{% url 'pybo:comment_delete_question' comment.id %}">삭제</a>
+                    <a href="{% url 'pybo:comment_modify_question' comment.id %}" class="small">
+                        수정
+                    </a>
+                    <a href="#" class="small delete" data-uri="{% url 'pybo:comment_delete_question' comment.id %}">
+                        삭제
+                    </a>
                 {% endif %}
-                <a href="{% url 'pybo:comment_create_question' question.id %}" class="small">댓글 달기</a>
+                <a href="{% url 'pybo:comment_create_question' question.id %}" class="small">
+                    댓글 달기
+                </a>
 
                 <ul>
                     {% for reply in comment.replies.all %}
@@ -99,15 +120,6 @@
         <a href="{% url 'pybo:comment_create_question' question.id %}" class="small"><small>질문 댓글 추가...</small></a>
     </div>
     {% comment %} 질문에 대한 댓글 리스트 end {% endcomment %}
-
-    {% comment %} 업로드된 이미지 표시 start {% endcomment %}
-    {% if question.image %}
-        <div>
-            <h5>업로드된 이미지:</h5>
-            <img src="{{ question.image.url }}" alt="Uploaded Image" style="max-width: 300px; height: auto;">
-        </div>
-    {% endif %}
-    {% comment %} 업로드된 이미지 표시 end {% endcomment %}
 
     <h5 class="border-bottom my-3 py-2">
         {{ question.answer_set.count }}개의 답변이 있습니다.

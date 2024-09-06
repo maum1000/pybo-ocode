@@ -39,9 +39,8 @@
         {% comment %} 내용 필드 start {% endcomment %}
         <div class="form-group">
             <label for="content">내용</label>
-            <textarea name="{{ form.content.name }}" id="content" class="form-control" rows="10">
-                {{ form.content.value|default_if_none:'' }}
-            </textarea>
+            <textarea name="content" id="content" class="form-control" rows="10">{{ form.content.value|default_if_none:'' }}</textarea>
+            
             {% comment %} 이미지 업로드 필드 start {% endcomment %}
             <div class="form-group">
                 <label for="id_image">업로드 이미지:</label>
@@ -49,9 +48,7 @@
             </div>
             {% comment %} 이미지 업로드 필드 end {% endcomment %}   
 
-            {% comment %} 이미지 미리보기 start {% endcomment %}
             <div id="image-preview-container"></div>
-            {% comment %} 이미지 미리보기 end {% endcomment %}
 
         </div>
         {% comment %} 내용 필드 end {% endcomment %}

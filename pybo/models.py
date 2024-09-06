@@ -10,8 +10,8 @@ class Question(models.Model):
     # 질문 제목, 최대 200자까지 허용, 반드시 입력해야 함
     subject = models.CharField(max_length=200, blank=False)
     
-    # 질문 내용, 비워둘 수 있음
-    content = models.TextField(null=True, blank=True)
+    # 질문 내용, 비워둘 수 없음
+    content = models.TextField()
     
     # 질문 작성 일시
     create_date = models.DateTimeField()
