@@ -8,6 +8,16 @@
         margin-top: 10px;
         margin-left: 100px;
     }
+    #drop-zone {
+        border: 2px dashed #007bff;
+        padding: 10px;
+        margin-top: 10px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+    #drop-zone.hover {
+        background-color: #e9ecef;
+    }
 </style>
 
 <div class="container">
@@ -16,7 +26,6 @@
     <form method="post" class="post-form my-3" enctype="multipart/form-data">
         {% csrf_token %}
 
-        {% comment %} 오류 표시 start {% endcomment %}
         {% if form.errors %}
             <div class="alert alert-danger" role="alert">
                 {% for field in form %}
@@ -27,69 +36,85 @@
                 {% endfor %}
             </div>
         {% endif %}
-        {% comment %} 오류 표시 end {% endcomment %}
 
-        {% comment %} 제목 필드 start {% endcomment %}
         <div class="form-group">
             <label for="subject">제목</label>
             <input type="text" name="{{ form.subject.name }}" id="subject" class="form-control" value="{{ form.subject.value|default_if_none:'' }}">
         </div>
-        {% comment %} 제목 필드 end {% endcomment %}
 
-        {% comment %} 내용 필드 start {% endcomment %}
         <div class="form-group">
             <label for="content">내용</label>
             <textarea name="content" id="content" class="form-control" rows="10">{{ form.content.value|default_if_none:'' }}</textarea>
             
-            {% comment %} 이미지 업로드 필드 start {% endcomment %}
             <div class="form-group">
                 <label for="id_image">업로드 이미지:</label>
-                {% comment %} accept="image/*" 속성은 이미지 파일만 업로드 가능하도록 함 {% endcomment %}
                 <input 
                     type="file" 
                     name="image" 
                     id="id_image" 
-                    accept="image/*" 
-                    value="{{ form.content.value|default_if_none:'' }}"
+                    accept="image/*"
                 >
-            </div>
-            {% comment %} 이미지 업로드 필드 end {% endcomment %}   
+                <div id="drop-zone">파일을 여기에 드래그 앤 드롭 하세요</div>
+            </div>  
 
             <div id="image-preview-container"></div>
 
         </div>
-        {% comment %} 내용 필드 end {% endcomment %}
 
         <button type="submit" class="btn btn-primary">저장하기</button>
 
     </form>
 </div>
 
-{% comment %} 업로드된 이미지를 미리 보기 위한 JavaScript start {% endcomment %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const dropZone = document.getElementById('drop-zone');
         const imageInput = document.querySelector('input[name="image"]');
-        const previewContainer = document.getElementById('image-preview-container');  // 미리보기 요소를 추가할 위치
+        const previewContainer = document.getElementById('image-preview-container');
         const imagePreview = document.createElement('img');
-        imagePreview.classList.add('image-preview');  // CSS 클래스 추가
+        imagePreview.classList.add('image-preview');
     
-        previewContainer.appendChild(imagePreview);  // 미리보기 요소를 원하는 위치에 추가
-    
+        previewContainer.appendChild(imagePreview);
+
+        function previewImage(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        dropZone.addEventListener('dragover', function(event) {
+            event.preventDefault();
+            dropZone.classList.add('hover');
+        });
+
+        dropZone.addEventListener('dragleave', function(event) {
+            event.preventDefault();
+            dropZone.classList.remove('hover');
+        });
+
+        dropZone.addEventListener('drop', function(event) {
+            event.preventDefault();
+            dropZone.classList.remove('hover');
+            const files = event.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                imageInput.files = files;  // 드롭된 파일을 input에 반영
+                previewImage(files[0]);
+            } else {
+                imagePreview.src = '';
+            }
+        });
+
         imageInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;  // 파일을 읽어 미리보기에 추가
-                };
-                reader.readAsDataURL(file);  // 파일을 읽어들임
+                previewImage(file);
             } else {
-                imagePreview.src = '';  // 파일이 없으면 미리보기 비움
+                imagePreview.src = '';
             }
         });
     });
-    
 </script>
-{% comment %} 업로드된 이미지를 미리 보기 위한 JavaScript end {% endcomment %}
-
 {% endblock %}
