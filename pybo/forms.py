@@ -10,12 +10,12 @@ class QuestionForm(forms.ModelForm):
         widgets = {
 
             'subject': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'content' : forms.Textarea(attrs={'class': 'form-control', 'rows':8}),
+            'content' : forms.Textarea(attrs={'class': 'form-control', 'rows':8}),
         }
         labels = {
 
             'subject': '제목',
-            # 'content' :'내용',
+            'content' :'내용',
         }
         # widgets = {
         #     'subject': forms.TextInput(attrs={'class': 'form-control'}),
