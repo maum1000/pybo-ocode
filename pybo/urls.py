@@ -23,43 +23,52 @@ index 함수는 질문 목록을 보여주는 기능을 한다.
 
 urlpatterns = [
     
-    # base_views.py 
+    # base_views.py
 
-    # index 함수 호출
+    # 메인 페이지로 이동 (index 함수 호출)
     path('', base_views.index, name='index'),
-    # question_id를 매개변수로 받아 detail 함수 호출
+    
+    # 질문 상세 페이지로 이동 (question_id를 매개변수로 받아 detail 함수 호출)
     path('<int:question_id>/', base_views.detail, name='detail'),
 
     # question_views.py
 
-    # question_create 함수 호출
+    # 질문 생성 페이지로 이동 (question_create 함수 호출)
     path('question/create/', question_views.question_create, name='question_create'),
-    # question_id를 매개변수로 받아 question_modify 함수 호출
+    
+    # 질문 수정 페이지로 이동 (question_id를 매개변수로 받아 question_modify 함수 호출)
     path('question/modify/<int:question_id>/', question_views.question_modify, name='question_modify'),
-    # question_id를 매개변수로 받아 question_delete 함수 호출
+    
+    # 질문 삭제 (question_id를 매개변수로 받아 question_delete 함수 호출)
     path('question/delete/<int:question_id>/', question_views.question_delete, name='question_delete'),
-    # question_id를 매개변수로 받아 question_vote 함수 호출
+    
+    # 질문 추천 (question_id를 매개변수로 받아 question_vote 함수 호출)
     path('question/vote/<int:question_id>/', question_views.question_vote, name='question_vote'),
 
-    # answer_views.py 
+    # answer_views.py
 
-    # question_id를 매개변수로 받아 answer_create 함수 호출
+    # 답변 생성 페이지로 이동 (question_id를 매개변수로 받아 answer_create 함수 호출)
     path('answer/create/<int:question_id>/', answer_views.answer_create, name='answer_create'),
-    # answer_id를 매개변수로 받아 answer_modify 함수 호출
+    
+    # 답변 수정 페이지로 이동 (answer_id를 매개변수로 받아 answer_modify 함수 호출)
     path('answer/modify/<int:answer_id>/', answer_views.answer_modify, name='answer_modify'),
-    # answer_id를 매개변수로 받아 answer_delete 함수 호출
+    
+    # 답변 삭제 (answer_id를 매개변수로 받아 answer_delete 함수 호출)
     path('answer/delete/<int:answer_id>/', answer_views.answer_delete, name='answer_delete'),
-    # answer_id를 매개변수로 받아 answer_vote 함수 호출
+    
+    # 답변 추천 (answer_id를 매개변수로 받아 answer_vote 함수 호출)
     path('answer/vote/<int:answer_id>/', answer_views.answer_vote, name='answer_vote'),
 
+    # comment_views.py
 
-    path('comment/create/question/<int:question_id>/', comment_view.comment_create_question ,name ='comment_create_question'),
-    path('comment/modify/question/<int:comment_id>/', comment_view.comment_modify_question ,name ='comment_modify_question'),
-    path('comment/delete/question/<int:comment_id>/', comment_view.comment_delete_question ,name ='comment_delete_question'),
-
-
-
-
+    # 질문에 대한 댓글 생성 (question_id를 매개변수로 받아 comment_create_question 함수 호출)
+    path('comment/create/question/<int:question_id>/', comment_view.comment_create_question, name='comment_create_question'),
+    
+    # 질문에 대한 댓글 수정 (comment_id를 매개변수로 받아 comment_modify_question 함수 호출)
+    path('comment/modify/question/<int:comment_id>/', comment_view.comment_modify_question, name='comment_modify_question'),
+    
+    # 질문에 대한 댓글 삭제 (comment_id를 매개변수로 받아 comment_delete_question 함수 호출)
+    path('comment/delete/question/<int:comment_id>/', comment_view.comment_delete_question, name='comment_delete_question'),
 ]
 
 ###############################################################################################################
