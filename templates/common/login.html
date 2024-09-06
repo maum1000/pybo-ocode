@@ -15,7 +15,7 @@
     <form method="post" action="{% url 'common:login' %}">
         {% csrf_token %}
         {% comment %} 
-            로그인 성공후 이동되는 URL next 파라미터에 있는 URL 페이지로 이동하겠다는 의미 
+            로그인 성공후 이동되는 URL, next 파라미터에 있는 URL 페이지로 이동하겠다는 의미 
         {% endcomment %}
         <input type="hidden" name="next" value="{{ next }}">  
         {% include "form_errors.html" %}
