@@ -48,6 +48,11 @@
                 <input type="file" name="image" id="id_image" accept="image/*" value="{{ form.content.value|default_if_none:'' }}">
             </div>
             {% comment %} 이미지 업로드 필드 end {% endcomment %}   
+
+            {% comment %} 이미지 미리보기 start {% endcomment %}
+            <div id="image-preview-container"></div>
+            {% comment %} 이미지 미리보기 end {% endcomment %}
+
         </div>
         {% comment %} 내용 필드 end {% endcomment %}
 
@@ -60,24 +65,26 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const imageInput = document.querySelector('input[name="image"]');
+        const previewContainer = document.getElementById('image-preview-container');  // 미리보기 요소를 추가할 위치
         const imagePreview = document.createElement('img');
-        imagePreview.classList.add('image-preview');
-        // 이미지 미리보기를 위한 img 태그를 body에 추가
-        document.body.appendChild(imagePreview);
-
+        imagePreview.classList.add('image-preview');  // CSS 클래스 추가
+    
+        previewContainer.appendChild(imagePreview);  // 미리보기 요소를 원하는 위치에 추가
+    
         imageInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
+                    imagePreview.src = e.target.result;  // 파일을 읽어 미리보기에 추가
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(file);  // 파일을 읽어들임
             } else {
-                imagePreview.src = '';
+                imagePreview.src = '';  // 파일이 없으면 미리보기 비움
             }
         });
     });
+    
 </script>
 {% comment %} 업로드된 이미지를 미리 보기 위한 JavaScript end {% endcomment %}
 
