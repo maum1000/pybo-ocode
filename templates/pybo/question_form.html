@@ -44,7 +44,14 @@
             {% comment %} 이미지 업로드 필드 start {% endcomment %}
             <div class="form-group">
                 <label for="id_image">업로드 이미지:</label>
-                <input type="file" name="image" id="id_image" accept="image/*" value="{{ form.content.value|default_if_none:'' }}">
+                {% comment %} accept="image/*" 속성은 이미지 파일만 업로드 가능하도록 함 {% endcomment %}
+                <input 
+                    type="file" 
+                    name="image" 
+                    id="id_image" 
+                    accept="image/*" 
+                    value="{{ form.content.value|default_if_none:'' }}"
+                >
             </div>
             {% comment %} 이미지 업로드 필드 end {% endcomment %}   
 
@@ -53,8 +60,8 @@
         </div>
         {% comment %} 내용 필드 end {% endcomment %}
 
-
         <button type="submit" class="btn btn-primary">저장하기</button>
+
     </form>
 </div>
 

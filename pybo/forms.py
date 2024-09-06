@@ -13,6 +13,7 @@ class QuestionForm(forms.ModelForm):
             'content' :'내용',
             'image' : '이미지',
         }
+        
         # widgets = {
         #     'subject': forms.TextInput(attrs={'class': 'form-control'}),
         #     'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
@@ -27,6 +28,7 @@ class AnswerForm(forms.ModelForm):
         labels = {
             'content': '답변내용',
         }
+        
         # widgets = {
         #     'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         # } # content 필드는 Textarea 위젯을 사용
