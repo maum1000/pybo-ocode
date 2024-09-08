@@ -6,18 +6,15 @@ from pybo.models import Question, Answer,Comment
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['subject', 'content','image'] # subject와 content 필드만 사용 #내용없애고 image만 추가
+        fields = ['subject', 'content', 'image1','image2'] # subject와 content 필드만 사용 #내용없애고 image만 추가
         labels = {
 
             'subject': '제목',
             'content' :'내용',
-            'image' : '이미지',
+            'image1' : '이미지1',
+            'image2' : '이미지2',
+
         }
-        
-        # widgets = {
-        #     'subject': forms.TextInput(attrs={'class': 'form-control'}),
-        #     'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
-        # } # subject 필드는 TextInput 위젯을 사용하고 content 필드는 Textarea 위젯을 사용
         
 ########################################################################################################
 
@@ -28,10 +25,6 @@ class AnswerForm(forms.ModelForm):
         labels = {
             'content': '답변내용',
         }
-        
-        # widgets = {
-        #     'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-        # } # content 필드는 Textarea 위젯을 사용
 
 ########################################################################################################
 
