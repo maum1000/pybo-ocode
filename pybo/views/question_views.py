@@ -2,6 +2,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+#
+from django.http import JsonResponse
+from django.urls import reverse
 
 from ..ai_system.ai_pybo import start_ai
 from ..forms import QuestionForm
@@ -21,7 +24,6 @@ def question_create(request):
             question.author = request.user  # 로그인한 사용자를 작성자로 저장
             question.create_date = timezone.now()
             question.save()
-            #
             # 이미지가 업로드되었으면 AI 처리 수행
             if question.image1:
                 image_path = question.image1.path
@@ -46,8 +48,17 @@ def question_create(request):
                 else:
                     pass
                 #
-            #
-            return redirect('pybo:index')            
+            # 이미지 파일을 따로 저장하기 위해 Question 모델에서 정의한 필드에 접근
+            if 'image1' in request.FILES:
+                question.image1 = request.FILES['image1']
+            if 'image2' in request.FILES:
+                question.image2 = request.FILES['image2']
+            question.save()  # 이미지 저장 후 모델 업데이트
+            # 성공 시 리다이렉트
+            return JsonResponse({'redirect_url': reverse('pybo:index')})
+
+        else:
+            return JsonResponse({'error': form.errors}, status=400)  # 폼 유효성 검사 실패 시 에러 반환
         #
     else:
         form = QuestionForm()  # GET 요청인 경우 빈 QuestionForm 객체를 생성
@@ -118,14 +129,14 @@ def question_modify(request, question_id):
         #
     #
     if request.method == "POST":
-        form = QuestionForm(request.POST, instance=question)
-        #
+        form = QuestionForm(request.POST,request.FILES, instance=question)
+        #ㅓ
         if form.is_valid():
             question = form.save(commit=False)
             question.author = request.user
             question.modify_date = timezone.now()  # 수정일시 저장
             question.save()
-            return redirect('pybo:detail', question_id=question.id)
+            return JsonResponse({'redirect_url': reverse('pybo:detail', args=[question.id])})
             #
         #
     #
