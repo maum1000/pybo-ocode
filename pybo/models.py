@@ -114,3 +114,59 @@ class Comment(models.Model):
     # 객체를 문자열로 표현할 때 댓글 내용의 앞 20자를 반환
     def __str__(self):
         return self.content[:20]
+
+
+
+#==============================================
+# 자유게시판
+#
+#==============================================
+
+class Question_Free(models.Model):
+    # 작성자: User 모델과 다대일 관계 (1명의 사용자가 여러 질문을 작성할 수 있음)
+    # on_delete=models.CASCADE: User가 삭제되면 관련 질문도 함께 삭제됨
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author_question_free')
+
+    subject = models.CharField(max_length=200, blank=False)
+    content = models.TextField()
+    create_date = models.DateTimeField()
+    modify_date = models.DateTimeField(null=True, blank=True)
+    view_count = models.PositiveIntegerField(default=0)
+    voter = models.ManyToManyField(User, related_name='voter_question_free')
+    image1 = models.ImageField(upload_to='image_free/', null=False, blank=False, verbose_name='AI 판단 이미지1')
+
+
+    # 객체를 문자열로 표현할 때 질문 제목을 반환
+    def __str__(self):
+        return self.subject
+
+
+
+# ==========================
+class Answer_Free(models.Model):
+
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author_answer_free')
+    question = models.ForeignKey(Question_Free, on_delete=models.CASCADE)
+    content = models.TextField()
+    create_date = models.DateTimeField()
+    modify_date = models.DateTimeField(null=True, blank=True)
+    voter = models.ManyToManyField(User, related_name='voter_answer_free')
+    answer_image = models.ImageField(upload_to='ai/answer_image_', null=True, blank=True, verbose_name='업로드 이미지')
+
+    def __str__(self):
+        return self.question.subject
+
+
+class Comment_Free(models.Model):
+
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    create_date = models.DateTimeField()
+    modify_date = models.DateTimeField(null=True, blank=True)
+    question = models.ForeignKey(Question_Free, null=True, blank=True, related_name='comments_free', on_delete=models.CASCADE)
+    answer = models.ForeignKey(Answer_Free, null=True, blank=True, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='replies_free', null=True, blank=True)
+
+    # 객체를 문자열로 표현할 때 댓글 내용의 앞 20자를 반환
+    def __str__(self):
+        return self.content[:20]

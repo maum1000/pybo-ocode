@@ -10,6 +10,8 @@ from ..ai_system.ai_pybo import start_ai
 from ..forms import QuestionForm
 from ..models import Question, Answer
 
+from ..ai_system.ai_pybo import start_ai_check_image
+
 ########################################################################################################
 
 @login_required(login_url='common:login')
@@ -27,26 +29,32 @@ def question_create(request):
             # 이미지가 업로드되었으면 AI 처리 수행
             if question.image1:
                 image_path = question.image1.path
+                image_path2 = question.image2.path
                 #
                 # POST 요청에서 탐지기와 예측기 목록을 가져옵니다.
                 selected_detectors = request.POST.getlist('detectors')
                 selected_predictors = request.POST.getlist('predictors')
                 #
-                if selected_detectors or selected_predictors:
+                #if selected_detectors or selected_predictors:
                     # AI 모델을 이용한 이미지 처리
                     # request를 함께 전달하여 데코레이터에서 처리될 수 있도록 함
-                    result_image_path = start_ai(request, image_path, selected_detectors, selected_predictors)
-                    # AI 처리 결과를 포함한 답변 생성
-                    answer = Answer(
+                    #result_image_path = start_ai(request, image_path, selected_detectors, selected_predictors)
+
+
+                result_image_path = start_ai_check_image(image_path,image_path2)
+
+                print("result image path ", result_image_path)
+                    #AI 처리 결과를 포함한 답변 생성
+                answer = Answer(
                         question=question,
                         author=request.user,
                         content="AI가 처리한 얼굴 인식 결과입니다.",
                         answer_image=result_image_path,
                         create_date=timezone.now(),
                     )
-                    answer.save()
-                else:
-                    pass
+                answer.save()
+                #else:
+                #    pass
                 #
             # 이미지 파일을 따로 저장하기 위해 Question 모델에서 정의한 필드에 접근
             if 'image1' in request.FILES:

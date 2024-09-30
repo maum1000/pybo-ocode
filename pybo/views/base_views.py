@@ -4,7 +4,7 @@ from django.db.models import Q
 import logging
 logger = logging.getLogger('pybo')
 
-from ..models import Question
+from ..models import Question, Question_Free
 
 def index(request):
     ''' pybo 목록 출력 '''
@@ -34,7 +34,7 @@ def index(request):
     #
     # 페이징 처리
     # Paginator 클래스를 사용하여 한 페이지에 10개의 질문을 보여줍니다.
-    paginator = Paginator(question_list, 10)  # Paginator 객체 생성 (페이지당 10개 항목)
+    paginator = Paginator(question_list, 8)  # Paginator 객체 생성 (페이지당 10개 항목)
     #
     # page 번호에 해당하는 페이지의 질문들을 가져옵니다.
     page_obj = paginator.get_page(page)  # 현재 페이지에 해당하는 데이터(page_obj)를 가져옴
@@ -62,24 +62,6 @@ def detail(request, question_id):
     context = {'question': question, 'comments': comments}  # 템플릿에 전달할 데이터
 
 
-    # pybo/question_detail.html 템플릿을 렌더링하고 context 데이터를 전달합니다.
-    return render(request, 'pybo/question_detail.html', context)  # 렌더링하여 사용자에게 응답
-    #
-#
-##################################### 제네릭 뷰 방식 #####################################
+    return render(request, 'pybo/question_detail.html', context)
 
-# # views.py 파일을 수정하여 클래스 기반 뷰로 변경
-# class IndexView(generic.ListView): # ListView 클래스를 상속받아 IndexView 클래스를 정의
-#     # IndexView 클래스는 템플릿명이 명시적으로 지정되지 않으면 자동으로 모델명_list.html 템플릿을 찾음
-#     """
-#     pybo 목록 출력
-#     """
-#     def get_queryset(self): # get_queryset 메서드를 오버라이딩하여 최신 순으로 정렬된 Question 모델 데이터를 반환
-#         return Question.objects.order_by('-create_date')
-    
-# class DetailView(generic.DetailView):
-#     """
-#     pybo 내용 출력
-#     """
-#     model = Question # model 속성에 Question 모델을 지정
-########################################################################################################
+

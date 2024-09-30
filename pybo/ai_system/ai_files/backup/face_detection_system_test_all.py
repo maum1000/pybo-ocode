@@ -478,7 +478,10 @@ class FaceRecognitionSystem:
         """이미지에서 얼굴을 탐지하고 결과를 저장"""
         try:
             image_rgb, faces = self._detect_faces(image_path) # 얼굴 탐지
+            print("faces :", faces)
+
             predictions, face_cnt, race_cnt, male_cnt = self._fairface_predict(image_rgb, faces, target_encodings) # 얼굴 예측
+
             result_image = self._draw_results(image_rgb, predictions, face_cnt, male_cnt, race_cnt) # 결과 그리기
             self._save_results(image_path, result_image, predictions) # 결과 저장
         except Exception as e:

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import base_views, question_views, answer_views , comment_view
+from .views import base_views, question_views, answer_views , comment_view, questionfree_views,base_views_free
 
 app_name = 'pybo' # namespace를 사용하면 다른 앱의 URL 패턴과 이름이 중복되더라도 문제가 발생하지 않는다.
 
@@ -27,10 +27,13 @@ urlpatterns = [
 ###############################################################################################################
 
     # 메인 페이지로 이동 (index 함수 호출)
+
+
     path('', base_views.index, name='index'),
-    
+    path('free/', base_views_free.index_free, name='index_free'),
     # 질문 상세 페이지로 이동 (question_id를 매개변수로 받아 detail 함수 호출)
     path('<int:question_id>/', base_views.detail, name='detail'),
+    path('free/<int:question_id>/', base_views_free.detail_free, name='detail_free'),
     
 ###############################################################################################################
     # question_views.py
@@ -49,6 +52,20 @@ urlpatterns = [
     path('question/vote/<int:question_id>/', question_views.question_vote, name='question_vote'),
     
 ###############################################################################################################
+
+    #questionfree_view.py
+    path('question_free/create/', questionfree_views.question_create, name='questionfree_create'),
+    path('question_free/modify/<int:question_id>/', questionfree_views.question_modify, name='questionfree_modify'),
+    path('question_free/delete/<int:question_id>/', questionfree_views.question_delete, name='questionfree_delete'),
+    path('question_free/vote/<int:question_id>/', questionfree_views.question_vote, name='questionfree_vote'),
+
+    ###############################################################################################################
+    #answerfree_view.py
+    path('answer_free/create/<int:question_id>/', answer_views.answer_create, name='answerfree_create'),
+    path('answer_free/modify/<int:answer_id>/', answer_views.answer_modify, name='answerfree_modify'),
+    path('answer_free/delete/<int:answer_id>/', answer_views.answer_delete, name='answerfree_delete'),
+    path('answer_free/vote/<int:answer_id>/', answer_views.answer_vote, name='answerfree_vote'),
+
     # answer_views.py
 ###############################################################################################################
 

@@ -9,6 +9,7 @@ import pickle
 import random
 import face_recognition
 from PIL import Image, ImageDraw, ImageFont
+from tensorboard.backend.event_processing.event_file_inspector import print_dict
 from torchvision import models, transforms
 from ultralytics import YOLO
 from mtcnn import MTCNN
@@ -32,6 +33,7 @@ def resize_image_with_padding(image, target_size):
     #
     h, w, _ = image.shape
     scale = target_size / max(h, w)
+    print("scale",scale)
     resized_img = cv2.resize(image, (int(w * scale), int(h * scale)))
     #
     delta_w = target_size - resized_img.shape[1]
@@ -39,6 +41,8 @@ def resize_image_with_padding(image, target_size):
     top, bottom = delta_h // 2, delta_h - (delta_h // 2)
     left, right = delta_w // 2, delta_w - (delta_w // 2)
     #
+    print(h, w, scale, delta_w, delta_h, top, bottom, left, right, resized_img.shape[0],resized_img.shape[1])
+
     color = [0, 0, 0]
     new_img = cv2.copyMakeBorder(resized_img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)
     #
@@ -472,12 +476,14 @@ class FaceRecognitionSystem:
         self.config = config
         self.detector_manager = detector_manager
         self.predictor_manager = predictor_manager
-        #
-    #
+
+
     def process_image(self, image_path, target_encodings):
         """이미지에서 얼굴을 탐지하고 결과를 저장"""
         try:
+
             image_rgb, faces = self._detect_faces(image_path) # 얼굴 탐지
+            print("process image====================================",faces)
             predictions, face_cnt, race_cnt, male_cnt = self._fairface_predict(image_rgb, faces, target_encodings) # 얼굴 예측
             result_image = self._draw_results(image_rgb, predictions, face_cnt, male_cnt, race_cnt) # 결과 그리기
             self._save_results(image_path, result_image, predictions) # 결과 저장
@@ -565,28 +571,71 @@ class FaceRecognitionSystem:
             #
         #
     #
+    def getScaleValueFromImage(self,image_shape, target_size, predictions):
+
+        #원본이미지 w,h값
+        h, w ,_= image_shape
+
+        #print(predictions)
+        #print('w', w, 'h', h)
+
+        print("predictions :===========", predictions)
+        scale = target_size / max(h, w)
+
+        resize_width  = (int(w * scale))
+        resize_height =  (int(h * scale))
+
+        delta_w = target_size - resize_width
+        delta_h = target_size - resize_height
+
+        top, bottom = delta_h // 2, delta_h - (delta_h // 2)
+        left, right = delta_w // 2, delta_w - (delta_w // 2)
+
+        result_padding = [top,bottom, left, right]
+        result_pos = []
+        for  x_v, y_v, w_v, h_v, _, _, box_color, prediction_text in predictions :
+
+            x1 = int(x_v * scale) + left
+            y1 = int(y_v * scale) + top
+            w1 = int(w_v * scale)
+            h1 = int(h_v * scale)
+            li = (x1,y1,w1,h1,prediction_text)
+
+            result_pos.append(li)
+
+        print("rseult pos ", result_pos)
+        return result_pos, result_padding, scale
+
+
+
     def _draw_results(self, image_rgb, predictions, face_cnt, male_cnt, race_cnt):
         """결과를 이미지에 그린 후 리턴"""
         font_size = max(12, int(image_rgb.shape[1] / 200)) # 폰트 크기
-        image_rgb, scale, top, left = resize_image_with_padding(image_rgb, 512) # 이미지 리사이즈
-        #
-        # 예측 결과 그리기
-        for x, y, w, h, _, _, box_color, prediction_text in predictions: 
-            x = int(x * scale) + left
-            y = int(y * scale) + top
-            w = int(w * scale)
-            h = int(h * scale)
-            image_rgb = draw_korean_text(self.config, image_rgb, prediction_text, (x, y), 15, font_color=(0, 0, 0), background_color=box_color)
-            image_rgb = cv2.rectangle(image_rgb, (x, y), (x + w, y + h), box_color, 2)
-            #
-        #
+
+        #이미지 정보를 얻어 오기
+        result_boxs, result_padding, scale2 = self.getScaleValueFromImage(image_rgb.shape, 512, predictions)
+
+        resized_img = cv2.resize(image_rgb, (int(image_rgb.shape[1] * scale2), int(image_rgb.shape[0] * scale2)))
+        color =(0,0,0)
+        new_img = cv2.copyMakeBorder(resized_img, result_padding[0], result_padding[1], result_padding[2],  result_padding[3], cv2.BORDER_CONSTANT, value =color)
+
+
+        color = (191, 191, 191)
+
+        for rect in result_boxs:
+            new_img = cv2.rectangle(new_img, (rect[0], rect[1]), (rect[0]+rect[2], rect[1]+rect[3]),color, 2)
+            new_img = draw_korean_text(self.config, new_img, rect[4], (rect[0], rect[1]), 15, font_color=(0, 0, 0),
+                                       background_color=(255, 0, 255))
+
+
         info_text = f"검출된 인원 수: {face_cnt}명\n남성: {male_cnt}명\n여성: {face_cnt - male_cnt}명\n"
         race_info = "\n".join([f"{race}: {count}명" for race, count in race_cnt.items() if count > 0])
-        image_rgb = extend_image_with_text(self.config, image_rgb, info_text + race_info, font_size)
+        new_img = extend_image_with_text(self.config, new_img, info_text + race_info, font_size)
         #
-        return image_rgb
-        #
-    #
+        return new_img
+
+
+
     def _save_results(self, image_path, image_rgb, predictions):
         """결과 이미지를 저장하고 메타데이터 추가"""
         try:
@@ -604,7 +653,6 @@ class FaceRecognitionSystem:
         except Exception as e:
             logging.error(f"결과 저장 중 오류 발생: {e}")
         #
-    #
 #
 # =========================
 # 얼굴 인식 시스템 클래스 for Django
@@ -621,6 +669,7 @@ class ForDjango(FaceRecognitionSystem):
         output_path : 결과 이미지 경로(pybo/pybo/media/answer_image/파일명)
         """
         image_rgb, faces = self._detect_faces(image_path)
+
         predictions, face_cnt, race_cnt, male_cnt = self._predict_faces(image_rgb, faces, target_encodings)
         result_image = self._draw_results(image_rgb, predictions, face_cnt, male_cnt, race_cnt)
         output_path = self._save_results(image_path, result_image, predictions) 
@@ -723,8 +772,24 @@ def main():
     setup_warnings_and_logging()
     #
     # 설정 파일 로드
-    config_path = os.path.join(Path(__file__).resolve().parent, 'config.json')
-    config = load_config(config_path)
+    #config_path = os.path.join(Path(__file__).resolve().parent, 'config.json')
+
+
+    #config = load_config(config_path)
+    base_dir = os.path.join(Path(__file__).resolve().parent, 'ai_files')
+    base_dir = os.path.join(Path(__file__).resolve().parent.parent.parent, 'ai_files')
+
+
+    django_media_dir = os.path.join(Path(__file__).resolve().parent.parent.parent, 'media/pybo/answer_image')
+    config = {
+        "dlib_model_path": os.path.join(base_dir, 'ai_models', 'DilbCNN', 'mmod_human_face_detector.dat'),
+        "yolo_model_path": os.path.join(base_dir, 'ai_models', 'YOLOv8', 'yolov8n-face.pt'),
+        "fair_face_model_path": os.path.join(base_dir, 'ai_models', 'FairFace', 'resnet34_fair_face_4.pt'),
+        "image_folder": os.path.join(base_dir, 'image_test', 'test_park_mind_problem'),
+        "pickle_path": os.path.join(base_dir, 'embedings', 'FaceRecognition(ResNet34).pkl'),
+        "font_path": os.path.join(base_dir, 'fonts', 'NanumGothic.ttf'),
+        "results_folder": django_media_dir,
+    }
     #
     # 얼굴 탐지기 생성
     detector_manager = FaceDetectors(

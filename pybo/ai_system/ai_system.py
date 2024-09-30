@@ -18,6 +18,8 @@ import io
 import shutil
 from pathlib import Path
 import warnings
+
+
 #
 # =========================
 # 로깅 및 경고 설정
@@ -471,6 +473,7 @@ class FacePredictors(ModelManager):
                 logging.error(f"예측 중 오류 발생: {e}")
                 continue
             all_predictions.update(prediction)
+
         logging.info(f"예측 결과: {all_predictions}")
         return all_predictions
         #
@@ -640,6 +643,8 @@ class ForDjango(AiSystem):
             output_path = self._save_results(image_path, result_image, predictions)
             logging.info(f"이미지 분석 결과 저장: {image_path}")
             logging.info(f"이미지 분석 결과 저장: {output_path}")
+
+
             django_path = os.path.join(
                 
                 # 이미지 경로를 Django에서 사용할 수 있는 형태로 변환

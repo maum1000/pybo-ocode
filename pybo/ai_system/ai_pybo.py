@@ -1,6 +1,8 @@
 import logging
 import cv2
 import os
+
+from .ai_image_process import AIImage_Process
 #
 from .ai_system import setup_django_system
 
@@ -12,3 +14,15 @@ def start_ai(request, image_path, face_recognition_system, target_encodings, sel
     return output_path
     #
 #
+
+def start_ai_check_image(image_path_ori,image_path_dest=None):
+    # 이미지 한건으로 했을 경우와 두장일때 테스트로 처리
+    ai_process = AIImage_Process(image_path_ori)
+
+    print(image_path_ori)
+    print(image_path_dest)
+
+    output_path = ai_process.process_image_similarity(image_path_ori, image_path_dest)
+    return output_path
+
+

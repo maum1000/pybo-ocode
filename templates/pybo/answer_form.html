@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 {% comment %} 답변 수정 {% endcomment %}
-<div class="container my-3">
+<div class="container my-3" style="margin-left: 220px">
     <form method="post">
         {% csrf_token %}
         {% include "form_errors.html" %}

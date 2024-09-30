@@ -1,12 +1,85 @@
-{% comment %} 네비게이션 바 Start {% endcomment %}
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-    <a class="navbar-brand" href="{% url 'pybo:index' %}">Pybo</a>
-    <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
-        <ul class="navbar-nav">
+
+{% comment %} 네비게이션 바 Start {% endcomment %}
+<style>
+.custom-bg {
+    background-color: #FFFFFF; /* 원하는 색상 코드 */
+}
+.left-navbar{
+    position: absolute;
+    left: 0;
+
+}
+
+.sidebar {
+            height: 100vh; /* 전체 화면 높이 */
+            position: fixed; /* 고정된 위치 */
+            left: 0; /* 왼쪽에 위치 */
+            top: 0; /* 상단에 위치 */
+            width: 200px; /* 너비 */
+            background-color: #4A90E2; /* 배경색 */
+            z-index: 1000;
+
+
+.navbar-nav {
+    display: flex; /* Flexbox 사용 */
+    flex-direction: column; /* 세로로 나열 */
+    list-style-type: none; /* 기본 리스트 스타일 제거 */
+    padding: 0; /* 기본 패딩 제거 */
+}
+
+.nav-item {
+    margin: 10px 0; /* 각 메뉴 항목 간의 간격 */
+}
+
+.nav-link {
+    white-space:nowrap;
+    text-align: center;
+
+}
+
+.nav-link img {
+    margin-right: 8px; /* 아이콘과 텍스트 간의 간격 */
+}
+</style>
+
+<div class="sidebar">
+<nav class="navbar navbar-expand-lg navbar-muted custom-bg border-bottom justify-content-start ">
+
+<!--    <div class="collapse navbar-collapse " id="navbarNav">-->
+        <ul class="navbar-nav mx-auto">
+
+              <li class="nav-item">
+                    <a class="navbar-brand" href="{% url 'pybo:index' %}">MAIN</a>
+                    <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </li>
+
+             <li class="nav-item">
+                    <a class="nav-link  text-dark" href="{% url 'pybo:index' %}">
+                        {% load static %}
+                        <img src="{% static 'images/question.png' %}" style="width: 30px; height: 30px;">
+                        질문 게시판
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{% url 'pybo:index_free' %}">
+                        {% load static %}
+                        <img src="{% static 'images/free_talking.png' %}" style="width: 30px; height: 30px; ">
+                        자유 게시판
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link  text-dark" href="{% url 'pybo:index' %}">
+                        <img src="{% static 'images/announcement.png' %}" style="width: 30px; height: 30px; ">
+                        공지사항</a>
+                </li>
+            <li class="nav-item">
+                 {% if not user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'common:signup' %}">회원가입</a>
+                {% endif %}
+            </li>
             <li class="nav-item">
                 {% comment %} 현제 사용자가 인증된 경우 사용자 이름과 로그아웃 링크를 출력 {% endcomment %}
                 {% if user.is_authenticated %}
@@ -15,13 +88,23 @@
                     <a class="nav-link" href="{% url 'common:login' %}">로그인</a>
                 {% endif %}
             </li>
-            <li>
-                {% if not user.is_authenticated %}
-                    <a class="nav-link" href="{% url 'common:signup' %}">회원가입</a>
-                {% endif %}
-            </li>
         </ul>
-    </div>
+<!--    </div>-->
 </nav>
+</div>
+<!--<nav class="sidebar">-->
+<!--        <div class="navbar-brand text-center">브랜드</div>-->
+<!--        <ul class="nav flex-column">-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" href="#">링크1</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" href="#">링크2</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" href="#">링크3</a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--</nav>-->
 
 {% comment %} 네비게이션 바 End {% endcomment %}

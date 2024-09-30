@@ -27,14 +27,14 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
 
-# MySQL 데이터베이스 설정
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': env('MYSQL_DATABASE'),
-        'USER': env('MYSQL_USER'),
-        'PASSWORD': env('MYSQL_PASSWORD'),
-        'HOST': env('MYSQL_HOST'),
-        'PORT': env('MYSQL_PORT'),
-    }
-}
+# # MySQL 데이터베이스 설정
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': env('MYSQL_DATABASE'),
+#         'USER': env('MYSQL_USER'),
+#         'PASSWORD': env('MYSQL_PASSWORD'),
+#         'HOST': env('MYSQL_HOST'),
+#         'PORT': env('MYSQL_PORT'),
+#     }
+# }

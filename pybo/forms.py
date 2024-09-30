@@ -1,5 +1,5 @@
 from django import forms
-from pybo.models import Question, Answer,Comment
+from pybo.models import Question, Answer,Comment,Question_Free,Answer_Free
 
 ########################################################################################################
 
@@ -15,6 +15,21 @@ class QuestionForm(forms.ModelForm):
             'image2' : '이미지2',
         }
         
+########################################################################################################
+
+class QuestionFreeForm(forms.ModelForm):
+    class Meta:
+        model = Question_Free
+        fields = ['subject', 'content', 'image1']  # subject와 content 필드만 사용 #내용없애고 image만 추가
+        labels = {
+
+            'subject': '제목',
+            'content': '내용',
+            'image1': '이미지1',
+            
+        }
+
+
 ########################################################################################################
 
 class AnswerForm(forms.ModelForm):

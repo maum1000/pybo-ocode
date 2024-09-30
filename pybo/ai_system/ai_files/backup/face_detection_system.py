@@ -506,13 +506,11 @@ class FaceRecognitionSystem:
             h = int(h * scale)
             image_rgb = self.image_processor.draw_text_korean(self.config, image_rgb, prediction_text, (x, y), 15, font_color=(0, 0, 0), background_color=box_color)
             image_rgb = cv2.rectangle(image_rgb, (x, y), (x + w, y + h), box_color, 2)
-            #
-        #
+
         face_info = f"검출된 인원 수: {face_cnt}명\n"
         gender_info = f"남성: {male_cnt}명\n여성: {face_cnt - male_cnt}명\n"
         race_info = "\n".join([f"{race}: {count}명" for race, count in race_cnt.items() if count != 0])
         info = face_info + gender_info + race_info
-        #
         image_rgb = self.image_processor.extend_and_add_text_above(self.config, image_rgb, info, font_size=font_size)
         return image_rgb
         #

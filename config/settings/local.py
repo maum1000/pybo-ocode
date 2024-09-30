@@ -1,6 +1,6 @@
 import os
 import environ
-
+from pathlib import Path
 from .base import *
 import PIL
 
